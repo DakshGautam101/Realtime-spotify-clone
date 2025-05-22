@@ -1,0 +1,13 @@
+{
+  "name": "spotify",
+  "version": "1.0.0",
+  "description": "this is a free version of spotify app",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "build":"npm install --prefix backend && npm install --prefix frontend && npm run build --prefix frontend",
+    "start": "npm start --prefix backend"
+  }
+}
