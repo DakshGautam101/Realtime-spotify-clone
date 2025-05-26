@@ -1,0 +1,22 @@
+{
+    "builds": [
+        {
+            "src": "backend/package.json",
+            "use": "@vercel/node"
+        }
+    ],
+    "routes": [
+        {
+            "src": "/(.*)",
+            "dest": "backend/src/index.js"
+        },
+        {
+            "src": "/api/(.*)",
+            "dest": "backend/src/api/$1"
+        },
+        {
+            "src": "/uploads/(.*)",
+            "dest": "backend/src/uploads/$1"
+        }
+    ]
+}
