@@ -7,6 +7,7 @@ import { SignedIn } from "@clerk/clerk-react";
 import { HomeIcon, Library, MessageCircle } from "lucide-react";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const LeftSidebar = () => {
 	const { albums, fetchAlbums, isLoading } = useMusicStore();
@@ -15,12 +16,14 @@ const LeftSidebar = () => {
 		fetchAlbums();
 	}, [fetchAlbums]);
 
-	console.log({ albums });
-
 	return (
-		<div className='h-full flex flex-col gap-2'>
-			{/* Navigation menu */}
-
+		<motion.div
+			initial={{ x: -50, opacity: 0 }}
+			animate={{ x: 0, opacity: 1 }}
+			transition={{ duration: 0.4, ease: "easeOut" }}
+			className='h-full flex flex-col gap-2'
+		>
+			{/* Navigation */}
 			<div className='rounded-lg bg-zinc-900 p-4'>
 				<div className='space-y-2'>
 					<Link
@@ -28,7 +31,8 @@ const LeftSidebar = () => {
 						className={cn(
 							buttonVariants({
 								variant: "ghost",
-								className: "w-full justify-start text-white hover:bg-zinc-800",
+								className:
+									"w-full justify-start text-white hover:bg-zinc-800 transition-all duration-200",
 							})
 						)}
 					>
@@ -42,7 +46,8 @@ const LeftSidebar = () => {
 							className={cn(
 								buttonVariants({
 									variant: "ghost",
-									className: "w-full justify-start text-white hover:bg-zinc-800",
+									className:
+										"w-full justify-start text-white hover:bg-zinc-800 transition-all duration-200",
 								})
 							)}
 						>
@@ -53,13 +58,11 @@ const LeftSidebar = () => {
 				</div>
 			</div>
 
-			{/* Library section */}
+			{/* Playlist Library */}
 			<div className='flex-1 rounded-lg bg-zinc-900 p-4'>
-				<div className='flex items-center justify-between mb-4'>
-					<div className='flex items-center text-white px-2'>
-						<Library className='size-5 mr-2' />
-						<span className='hidden md:inline'>Playlists</span>
-					</div>
+				<div className='flex items-center justify-between mb-4 text-white px-2'>
+					<Library className='size-5 mr-2' />
+					<span className='hidden md:inline'>Playlists</span>
 				</div>
 
 				<ScrollArea className='h-[calc(100vh-300px)]'>
@@ -68,28 +71,36 @@ const LeftSidebar = () => {
 							<PlaylistSkeleton />
 						) : (
 							albums.map((album) => (
-								<Link
-									to={`/albums/${album._id}`}
+								<motion.div
 									key={album._id}
-									className='p-2 hover:bg-zinc-800 rounded-md flex items-center gap-3 group cursor-pointer'
+									initial={{ opacity: 0, y: 10 }}
+									animate={{ opacity: 1, y: 0 }}
+									transition={{ duration: 0.2, delay: 0.05 }}
 								>
-									<img
-										src={album.imageUrl}
-										alt='Playlist img'
-										className='size-12 rounded-md flex-shrink-0 object-cover'
-									/>
-
-									<div className='flex-1 min-w-0 hidden md:block'>
-										<p className='font-medium truncate'>{album.title}</p>
-										<p className='text-sm text-zinc-400 truncate'>Album • {album.artist}</p>
-									</div>
-								</Link>
+									<Link
+										to={`/albums/${album._id}`}
+										className='p-2 hover:bg-zinc-800 transition-colors duration-200 rounded-md flex items-center gap-3 group cursor-pointer'
+									>
+										<img
+											src={album.imageUrl}
+											alt='Playlist'
+											className='size-12 rounded-md flex-shrink-0 object-cover'
+										/>
+										<div className='flex-1 min-w-0 hidden md:block'>
+											<p className='font-medium truncate'>{album.title}</p>
+											<p className='text-sm text-zinc-400 truncate'>
+												Album • {album.artist}
+											</p>
+										</div>
+									</Link>
+								</motion.div>
 							))
 						)}
 					</div>
 				</ScrollArea>
 			</div>
-		</div>
+		</motion.div>
 	);
 };
+
 export default LeftSidebar;

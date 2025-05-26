@@ -22,6 +22,7 @@
     "axios": "^1.9.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "framer-motion": "^12.12.2",
     "lucide-react": "^0.511.0",
     "ogl": "^1.0.11",
     "postprocessing": "^6.37.3",
