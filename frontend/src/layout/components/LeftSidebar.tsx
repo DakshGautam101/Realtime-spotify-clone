@@ -60,9 +60,9 @@ const LeftSidebar = () => {
 
 			{/* Playlist Library */}
 			<div className='flex-1 rounded-lg bg-zinc-900 p-4'>
-				<div className='flex items-center justify-between mb-4 text-white px-2'>
+				<div className='flex items-center mb-4 text-white px-2'>
 					<Library className='size-5 mr-2' />
-					<span className='hidden md:inline'>Playlists</span>
+					<span className='hidden md:inline font-bold'>Playlists</span>
 				</div>
 
 				<ScrollArea className='h-[calc(100vh-300px)]'>
