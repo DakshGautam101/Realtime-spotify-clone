@@ -9,16 +9,18 @@ import AdminPage from "./pages/admin/AdminPage";
 
 import { Toaster } from "react-hot-toast";
 import NotFoundPage from "./pages/404/NotFoundPage";
+import { ThemeProvider } from "@/components/theme-provider"
 
 function App() {
 	return (
 		<>
-			<Routes>
-				<Route
-					path='/sso-callback'
-					element={<AuthenticateWithRedirectCallback signUpForceRedirectUrl={"/auth-callback"} />}
-				/>
-				<Route path='/auth-callback' element={<AuthCallbackPage />} />
+			<ThemeProvider  defaultTheme="dark" storageKey="vite-ui-theme">
+				<Routes>
+					<Route
+						path='/sso-callback'
+						element={<AuthenticateWithRedirectCallback signUpForceRedirectUrl={"/auth-callback"} />}
+					/>
+					<Route path='/auth-callback' element={<AuthCallbackPage />} />
 				<Route path='/admin' element={<AdminPage />} />
 
 				<Route element={<MainLayout />}>
@@ -29,6 +31,7 @@ function App() {
 				</Route>
 			</Routes>
 			<Toaster />
+		</ThemeProvider>
 		</>
 	);
 }
