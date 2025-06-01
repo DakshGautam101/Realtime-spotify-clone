@@ -7,8 +7,8 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development nodemon backend/index.js",
-    "start": "cross-env NODE_ENV=production node backend/index.js",
+    "dev": "cross-env NODE_ENV=development nodemon backend/src/index.js",
+    "start:windows": "cross-env NODE_ENV=production node backend/src/index.js",
     "build": "npm install && npm install --prefix frontend && npm run build --prefix frontend"
   },
   "dependencies": {
