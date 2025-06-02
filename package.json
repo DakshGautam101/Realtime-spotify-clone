@@ -6,12 +6,17 @@
   "author": "",
   "type": "commonjs",
   "main": "index.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon backend/src/index.js",
     "start": "cross-env NODE_ENV=production node backend/src/index.js",
-    "build": "npm install && npm install --prefix frontend && npm run build --prefix frontend"
+    "build": "npm install && npm install --prefix frontend && npm run build --prefix frontend",
+    "postinstall": "npm install --prefix backend && npm install --prefix frontend"
   },
   "dependencies": {
     "cross-env": "^7.0.3"
-  }
+  },
+  "cacheDirectories": ["node_modules", "frontend/node_modules", "backend/node_modules"]
 }
