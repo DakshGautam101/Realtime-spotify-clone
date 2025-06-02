@@ -22,7 +22,10 @@ interface ChatStore {
 	setSelectedUser: (user: User | null) => void;
 }
 
-const baseURL = import.meta.env.MODE === "development" ? "http://localhost:5000" : "/";
+const baseURL = import.meta.env.MODE === "development"
+  ? "http://localhost:5000"  // 👈 your local backend port
+  : "https://realtime-spotify-clone-w2xn.onrender.com"; // 👈 your live backend
+
 
 const socket = io(baseURL, {
 	autoConnect: false, // only connect if user is authenticated
