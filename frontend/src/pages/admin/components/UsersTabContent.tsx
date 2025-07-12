@@ -8,8 +8,16 @@ import { axiosInstance } from "@/lib/axios";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import toast from "react-hot-toast";
 
+type User = {
+  _id: string;
+  fullName: string;
+  email: string;
+  imageUrl?: string;
+  banned: boolean;
+};
+
 const UsersTabContent = () => {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -20,7 +28,7 @@ const UsersTabContent = () => {
     setLoading(true);
     setError("");
     try {
-      const res = await axiosInstance.get("/users");
+      const res = await axiosInstance.get<User[]>("/users");
       setUsers(res.data);
     } catch (e) {
       setError("Failed to load users");

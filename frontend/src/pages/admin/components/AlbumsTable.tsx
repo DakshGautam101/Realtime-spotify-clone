@@ -17,6 +17,7 @@ const AlbumsTable = () => {
 			await deleteAlbum(id);
 			toast.success("Album deleted");
 		} catch {
+			console.error(error);
 			toast.error("Failed to delete album");
 		} finally {
 			setConfirmId(null);
