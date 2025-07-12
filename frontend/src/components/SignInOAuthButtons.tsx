@@ -12,7 +12,6 @@ const SignInForm = () => {
 	const [password, setPassword] = useState("");
 	const [fullName, setFullName] = useState("");
 	const [imageUrl, setImageUrl] = useState("");
-	const [imageFile, setImageFile] = useState<File | null>(null);
 	const [uploading, setUploading] = useState(false);
 	const [uploadProgress, setUploadProgress] = useState(0);
 	const { login, register, isLoading } = useAuthStore();
@@ -20,16 +19,16 @@ const SignInForm = () => {
 	const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
 		if (!file) return;
-		setImageFile(file);
 		setUploading(true);
 		setUploadProgress(0);
+
 		try {
 			const formData = new FormData();
 			formData.append("file", file);
-			formData.append("upload_preset", 'ml_default'); // Replace with your preset
+			formData.append("upload_preset", "ml_default");
 
 			const res = await axios.post(
-				"https://api.cloudinary.com/v1_1/dlpzs4eyw/image/upload", // Replace with your cloud name
+				"https://api.cloudinary.com/v1_1/dlpzs4eyw/image/upload",
 				formData,
 				{
 					onUploadProgress: (progressEvent) => {
@@ -63,22 +62,22 @@ const SignInForm = () => {
 	};
 
 	return (
-		<Card className="w-[90%] max-w-md bg-zinc-900 border-zinc-800">
+		<Card className="w-full max-w-md mx-auto bg-zinc-900 border border-zinc-800 shadow-xl rounded-2xl">
 			<CardHeader>
-				<CardTitle className="text-zinc-100 text-center">
-					{isLogin ? "Sign In" : "Create Account"}
+				<CardTitle className="text-center text-zinc-100 text-2xl font-semibold tracking-tight">
+					{isLogin ? "Welcome Back 👋" : "Create Your Account"}
 				</CardTitle>
 			</CardHeader>
 			<CardContent>
-				<form onSubmit={handleSubmit} className="space-y-4">
+				<form onSubmit={handleSubmit} className="space-y-5">
 					{!isLogin && (
 						<Input
 							type="text"
 							placeholder="Full Name"
 							value={fullName}
 							onChange={(e) => setFullName(e.target.value)}
-							required={!isLogin}
-							className="bg-zinc-800 border-zinc-700 text-zinc-100"
+							required
+							className="bg-zinc-800 border-zinc-700 text-zinc-100 placeholder-zinc-400 focus:ring-2 focus:ring-emerald-500 transition"
 						/>
 					)}
 					<Input
@@ -87,7 +86,7 @@ const SignInForm = () => {
 						value={email}
 						onChange={(e) => setEmail(e.target.value)}
 						required
-						className="bg-zinc-800 border-zinc-700 text-zinc-100"
+						className="bg-zinc-800 border-zinc-700 text-zinc-100 placeholder-zinc-400 focus:ring-2 focus:ring-emerald-500 transition"
 					/>
 					<Input
 						type="password"
@@ -95,40 +94,45 @@ const SignInForm = () => {
 						value={password}
 						onChange={(e) => setPassword(e.target.value)}
 						required
-						className="bg-zinc-800 border-zinc-700 text-zinc-100"
+						className="bg-zinc-800 border-zinc-700 text-zinc-100 placeholder-zinc-400 focus:ring-2 focus:ring-emerald-500 transition"
 					/>
 					{!isLogin && (
-						<div className="space-y-2">
-							<label className="block text-zinc-400 text-sm">Profile Photo</label>
+						<div>
+							<label className="block text-sm text-zinc-400 mb-1">Profile Photo</label>
 							<Input
 								type="file"
 								accept="image/*"
 								onChange={handleImageChange}
-								className="bg-zinc-800 border-zinc-700 text-zinc-100"
+								className="bg-zinc-800 border-zinc-700 text-zinc-100 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-600 file:text-white hover:file:bg-emerald-700 transition"
 							/>
 							{uploading && (
-								<div className="text-xs text-zinc-400">Uploading: {uploadProgress}%</div>
+								<p className="text-xs text-emerald-400 mt-2">Uploading: {uploadProgress}%</p>
 							)}
 							{imageUrl && (
-								<div className="flex items-center gap-2 mt-2">
-									<img src={imageUrl} alt="Profile Preview" className="w-12 h-12 rounded-full object-cover border border-zinc-700" />
-									<span className="text-xs text-zinc-400">Preview</span>
+								<div className="flex items-center gap-3 mt-3">
+									<img
+										src={imageUrl}
+										alt="Preview"
+										className="w-12 h-12 rounded-full object-cover border border-zinc-700"
+									/>
+									<p className="text-sm text-zinc-300">Preview</p>
 								</div>
 							)}
 						</div>
 					)}
-					<Button 
-						type="submit" 
-						className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
+					<Button
+						type="submit"
 						disabled={isLoading || uploading}
+						className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-lg transition"
 					>
-						{isLoading ? "Loading..." : (isLogin ? "Sign In" : "Sign Up")}
+						{isLoading ? "Loading..." : isLogin ? "Sign In" : "Sign Up"}
 					</Button>
 				</form>
-				<div className="mt-4 text-center">
+				<div className="mt-5 text-center">
 					<button
+						type="button"
 						onClick={() => setIsLogin(!isLogin)}
-						className="text-zinc-400 hover:text-zinc-200 text-sm"
+						className="text-sm text-zinc-400 hover:text-zinc-200 transition"
 					>
 						{isLogin ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
 					</button>

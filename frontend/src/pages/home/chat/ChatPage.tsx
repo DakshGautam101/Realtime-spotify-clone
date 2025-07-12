@@ -63,7 +63,7 @@ const ChatPage = () => {
 									) : messages.length === 0 ? (
 										<div className="text-zinc-400 text-center py-4">No messages yet. Say hi!</div>
 									) : (
-										messages.map((message, idx) => {
+										messages.map((message) => {
 											const isMe = message.senderId === user?._id;
 											return (
 												<div

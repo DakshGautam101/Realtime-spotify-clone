@@ -1,7 +1,7 @@
 import { axiosInstance } from "@/lib/axios";
 import type { Message, User } from "@/types";
 import { create } from "zustand";
-import { socket } from "@/lib/socket";
+import {socket} from '@/lib/socket.js'
 import toast from "react-hot-toast";
 
 interface ChatStore {
@@ -29,10 +29,6 @@ interface ChatStore {
 	markMessageAsRead: (messageId: string, readerId: string) => void;
 	markConversationAsRead: (userId: string) => void;
 }
-
-const baseURL = import.meta.env.MODE === "development"
-  ? "http://localhost:5000"
-  : "https://realtime-spotify-clone-w2xn.onrender.com";
 
 export const useChatStore = create<ChatStore>((set, get) => ({
 	users: [],
@@ -132,13 +128,13 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 				toast.error(error);
 			});
 
-			socket.on("typing", ({ senderId }) => {
+			socket.on("typing", ({ senderId }: { senderId: string }) => {
 				set((state) => ({
 					typingUsers: new Set([...state.typingUsers, senderId]),
 				}));
 			});
 
-			socket.on("stop_typing", ({ senderId }) => {
+			socket.on("stop_typing", ({ senderId }: { senderId: string }) => {
 				set((state) => {
 					const newTypingUsers = new Set(state.typingUsers);
 					newTypingUsers.delete(senderId);
@@ -146,7 +142,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 				});
 			});
 
-			socket.on("message_read", ({ messageId, readerId }) => {
+			socket.on("message_read", ({ messageId, readerId: _ }: { messageId: string; readerId: string }) => {
 				set((state) => ({
 					messages: state.messages.map(msg => 
 						msg._id === messageId ? { ...msg, read: true } : msg
@@ -154,7 +150,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 				}));
 			});
 
-			socket.on("activity_updated", ({ userId, activity }) => {
+			socket.on("activity_updated", ({ userId, activity }: { userId: string; activity: string }) => {
 				set((state) => {
 					const newActivities = new Map(state.userActivities);
 					newActivities.set(userId, activity);
