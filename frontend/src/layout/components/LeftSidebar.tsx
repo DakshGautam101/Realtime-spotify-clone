@@ -3,7 +3,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { useMusicStore } from "@/stores/useMusicStore.ts";
-import { SignedIn } from "@clerk/clerk-react";
+import { useAuthStore } from "@/stores/useAuthStore";
 import { HomeIcon, Library, MessageCircle } from "lucide-react";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
@@ -11,6 +11,7 @@ import { motion } from "framer-motion";
 
 const LeftSidebar = () => {
 	const { albums, fetchAlbums, isLoading } = useMusicStore();
+	const { isAuthenticated } = useAuthStore();
 
 	useEffect(() => {
 		fetchAlbums();
@@ -40,7 +41,7 @@ const LeftSidebar = () => {
 						<span className='hidden md:inline'>Home</span>
 					</Link>
 
-					<SignedIn>
+					{isAuthenticated && (
 						<Link
 							to={"/chat"}
 							className={cn(
@@ -54,7 +55,7 @@ const LeftSidebar = () => {
 							<MessageCircle className='mr-2 size-5' />
 							<span className='hidden md:inline'>Messages</span>
 						</Link>
-					</SignedIn>
+					)}
 				</div>
 			</div>
 

@@ -54,6 +54,34 @@ export const initializeSocket = (server) => {
 			}
 		});
 
+		socket.on("typing", ({ senderId, receiverId }) => {
+			const receiverSocketId = userSockets.get(receiverId);
+			if (receiverSocketId) {
+				io.to(receiverSocketId).emit("typing", { senderId });
+			}
+		});
+
+		socket.on("stop_typing", ({ senderId, receiverId }) => {
+			const receiverSocketId = userSockets.get(receiverId);
+			if (receiverSocketId) {
+				io.to(receiverSocketId).emit("stop_typing", { senderId });
+			}
+		});
+
+		socket.on("message_read", async ({ messageId, readerId }) => {
+			try {
+				const message = await Message.findByIdAndUpdate(messageId, { read: true }, { new: true });
+				if (message) {
+					const senderSocketId = userSockets.get(message.senderId);
+					if (senderSocketId) {
+						io.to(senderSocketId).emit("message_read", { messageId, readerId });
+					}
+				}
+			} catch (error) {
+				console.error("Message read error:", error);
+			}
+		});
+
 		socket.on("disconnect", () => {
 			let disconnectedUserId;
 			for (const [userId, socketId] of userSockets.entries()) {

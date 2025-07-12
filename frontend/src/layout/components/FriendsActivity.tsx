@@ -1,13 +1,13 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useChatStore } from "@/stores/useChatStore";
-import { useUser } from "@clerk/clerk-react";
+import { useAuthStore } from "@/stores/useAuthStore";
 import { HeadphonesIcon, Music, Users } from "lucide-react";
 import { useEffect } from "react";
 
 const FriendsActivity = () => {
 	const { users, fetchUsers, onlineUsers, userActivities } = useChatStore();
-	const { user } = useUser();
+	const { user } = useAuthStore();
 
 	useEffect(() => {
 		if (user) fetchUsers();
@@ -26,24 +26,24 @@ const FriendsActivity = () => {
 
 			<ScrollArea className='flex-1'>
 				<div className='p-4 space-y-4'>
-					{users.map((user) => {
-						const activity = userActivities.get(user.clerkId);
+					{users.map((friend) => {
+						const activity = userActivities.get(friend._id);
 						const isPlaying = activity && activity !== "Idle";
 
 						return (
 							<div
-								key={user._id}
+								key={friend._id}
 								className='cursor-pointer hover:bg-zinc-800/50 p-3 rounded-md transition-colors group'
 							>
 								<div className='flex items-start gap-3'>
 									<div className='relative'>
 										<Avatar className='size-10 border border-zinc-800'>
-											<AvatarImage src={user.imageUrl} alt={user.fullName} />
-											<AvatarFallback>{user.fullName[0]}</AvatarFallback>
+											<AvatarImage src={friend.imageUrl} alt={friend.fullName} />
+											<AvatarFallback>{friend.fullName[0]}</AvatarFallback>
 										</Avatar>
 										<div
 											className={`absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-zinc-900 
-												${onlineUsers.has(user.clerkId) ? "bg-green-500" : "bg-zinc-500"}
+												${onlineUsers.has(friend._id) ? "bg-green-500" : "bg-zinc-500"}
 												`}
 											aria-hidden='true'
 										/>
@@ -51,7 +51,7 @@ const FriendsActivity = () => {
 
 									<div className='flex-1 min-w-0'>
 										<div className='flex items-center gap-2'>
-											<span className='font-medium text-sm text-white'>{user.fullName}</span>
+											<span className='font-medium text-sm text-white'>{friend.fullName}</span>
 											{isPlaying && <Music className='size-3.5 text-emerald-400 shrink-0' />}
 										</div>
 

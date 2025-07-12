@@ -10,15 +10,15 @@ type StatsCardProps = {
 
 const StatsCard = ({ bgColor, icon: Icon, iconColor, label, value }: StatsCardProps) => {
 	return (
-		<Card className='bg-zinc-800/50 border-zinc-700/50 hover:bg-zinc-800/80 transition-colors'>
+		<Card className='bg-gradient-to-br from-zinc-800/80 to-zinc-900/80 border-none shadow-lg rounded-xl hover:scale-[1.03] hover:shadow-2xl transition-transform duration-200'>
 			<CardContent className='p-6'>
-				<div className='flex items-center gap-4'>
-					<div className={`p-3 rounded-lg ${bgColor}`}>
-						<Icon className={`size-6 ${iconColor}`} />
+				<div className='flex items-center gap-5'>
+					<div className={`p-4 rounded-full shadow-md ${bgColor} flex items-center justify-center`}>
+						<Icon className={`size-8 ${iconColor}`} />
 					</div>
 					<div>
-						<p className='text-sm text-zinc-400'>{label}</p>
-						<p className='text-2xl font-bold'>{value}</p>
+						<p className='text-base text-zinc-400 font-semibold'>{label}</p>
+						<p className='text-3xl font-extrabold tracking-tight text-white'>{value}</p>
 					</div>
 				</div>
 			</CardContent>

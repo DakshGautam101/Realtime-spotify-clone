@@ -1,12 +1,14 @@
 import Topbar from "@/components/Topbar";
 import { useChatStore } from "@/stores/useChatStore";
-import { useUser } from "@clerk/clerk-react";
+import { useAuthStore } from "@/stores/useAuthStore";
 import { useEffect, useRef } from "react";
 import UsersList from "./components/UsersList";
 import ChatHeader from "./components/ChatHeader";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import MessageInput from "./components/MessageInput";
+import MessageSkeleton from "./components/MessageSkeleton";
+import { Check, CheckCheck } from "lucide-react";
 
 const formatTime = (date: string) => {
 	return new Date(date).toLocaleTimeString("en-US", {
@@ -17,8 +19,8 @@ const formatTime = (date: string) => {
 };
 
 const ChatPage = () => {
-	const { user } = useUser();
-	const { messages, selectedUser, fetchUsers, fetchMessages } = useChatStore();
+	const { user } = useAuthStore();
+	const { messages, selectedUser, fetchUsers, fetchMessages, isLoading, error, typingUsers } = useChatStore();
 	const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
 	useEffect(() => {
@@ -26,7 +28,7 @@ const ChatPage = () => {
 	}, [fetchUsers, user]);
 
 	useEffect(() => {
-		if (selectedUser) fetchMessages(selectedUser.clerkId);
+		if (selectedUser) fetchMessages(selectedUser._id);
 	}, [selectedUser, fetchMessages]);
 
 	// Scroll to bottom when messages change
@@ -35,6 +37,8 @@ const ChatPage = () => {
 			messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
 		}
 	}, [messages]);
+
+	const isTyping = selectedUser && typingUsers.has(selectedUser._id);
 
 	return (
 		<main className='h-full rounded-lg bg-gradient-to-b from-zinc-800 to-zinc-900 overflow-hidden'>
@@ -52,35 +56,66 @@ const ChatPage = () => {
 							{/* Messages */}
 							<ScrollArea className='h-[calc(100vh-340px)]'>
 								<div className='p-4 space-y-4'>
-									{messages.map((message) => (
-										<div
-											key={message._id}
-											className={`flex items-start gap-3 ${
-												message.senderId === user?.id ? "flex-row-reverse" : ""
-											}`}
-										>
-											<Avatar className='size-8'>
-												<AvatarImage
-													src={
-														message.senderId === user?.id
-															? user.imageUrl
-															: selectedUser.imageUrl
-													}
-												/>
+									{isLoading ? (
+										<MessageSkeleton />
+									) : error ? (
+										<div className="text-red-400 text-center py-4">{error}</div>
+									) : messages.length === 0 ? (
+										<div className="text-zinc-400 text-center py-4">No messages yet. Say hi!</div>
+									) : (
+										messages.map((message, idx) => {
+											const isMe = message.senderId === user?._id;
+											return (
+												<div
+													key={message._id}
+													className={`flex items-end gap-2 ${isMe ? "flex-row-reverse" : ""}`}
+												>
+													<Avatar className='size-8 border-2 border-zinc-700'>
+														<AvatarImage
+															src={isMe ? user.imageUrl : selectedUser.imageUrl}
+														/>
+													</Avatar>
+													<div
+														className={`rounded-2xl px-4 py-2 max-w-[70%] shadow-md text-sm break-words
+															${isMe ? "bg-green-500 text-white ml-2" : "bg-zinc-800 text-zinc-100 mr-2"}`}
+													>
+														{message.content}
+														<div className='flex items-center justify-end gap-1 mt-1'>
+															<span className='text-xs opacity-80'>
+																{formatTime(message.createdAt)}
+															</span>
+															{isMe && (
+																<span className='text-xs'>
+																	{message.read ? (
+																		<CheckCheck className='size-3 text-blue-300' />
+																	) : (
+																		<Check className='size-3 opacity-60' />
+																	)}
+																</span>
+															)}
+														</div>
+													</div>
+												</div>
+											);
+										})
+									)}
+									
+									{/* Typing indicator */}
+									{isTyping && (
+										<div className="flex items-end gap-2">
+											<Avatar className='size-8 border-2 border-zinc-700'>
+												<AvatarImage src={selectedUser.imageUrl} />
 											</Avatar>
-
-											<div
-												className={`rounded-lg p-3 max-w-[70%]
-													${message.senderId === user?.id ? "bg-green-500" : "bg-zinc-800"}
-												`}
-											>
-												<p className='text-sm'>{message.content}</p>
-												<span className='text-xs text-zinc-300 mt-1 block'>
-													{formatTime(message.createdAt)}
-												</span>
+											<div className="bg-zinc-800 rounded-2xl px-4 py-2 mr-2">
+												<div className="flex space-x-1">
+													<div className="w-2 h-2 bg-zinc-400 rounded-full animate-bounce"></div>
+													<div className="w-2 h-2 bg-zinc-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+													<div className="w-2 h-2 bg-zinc-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+												</div>
 											</div>
 										</div>
-									))}
+									)}
+									
 									{/* Invisible anchor to scroll into view */}
 									<div ref={messagesEndRef} />
 								</div>
