@@ -55,8 +55,8 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
 		if (songs.length === 0) return;
 
 		const song = songs[startIndex];
-		const currentState = get();
-		console.log(currentState);
+		// const currentState = get();
+		// console.log(currentState);
 
 		// Update activity
 		const socket = useChatStore.getState().socket;
