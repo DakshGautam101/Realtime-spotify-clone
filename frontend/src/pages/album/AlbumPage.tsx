@@ -11,7 +11,6 @@ import Waves from "./themes/waves";
 import Lightning from "./themes/lighting";
 import Particles from "./themes/Particles";
 
-
 export const formatDuration = (seconds: number) => {
 	const minutes = Math.floor(seconds / 60);
 	const remainingSeconds = seconds % 60;
@@ -21,7 +20,7 @@ export const formatDuration = (seconds: number) => {
 const AlbumPage = () => {
 	const { albumId } = useParams();
 	const { fetchAlbumById, currentAlbum, isLoading } = useMusicStore();
-	const { currentSong, isPlaying, playAlbum, togglePlay } = usePlayerStore();
+	const { currentSong, isPlaying, playAlbum, togglePlay, queue } = usePlayerStore();
 
 	const [selectedTheme, setSelectedTheme] = useState<ReactNode | null>(null);
 
@@ -45,6 +44,7 @@ const AlbumPage = () => {
 			/>,
 			<Lightning key="lightning" hue={230} xOffset={0} speed={1} intensity={1} size={1} />,
 			<Particles
+				key="particles"
 				particleColors={['#ffffff', '#ffffff']}
 				particleCount={200}
 				particleSpread={10}
@@ -63,16 +63,41 @@ const AlbumPage = () => {
 	if (isLoading) return null;
 
 	const handlePlayAlbum = () => {
-		if (!currentAlbum) return;
-		const isCurrentAlbumPlaying = currentAlbum?.songs.some(song => song._id === currentSong?._id);
-		if (isCurrentAlbumPlaying) togglePlay();
-		else playAlbum(currentAlbum?.songs, 0);
+		if (!currentAlbum?.songs || currentAlbum.songs.length === 0) return;
+		
+		// Check if we're currently playing from this album
+		const isCurrentAlbumPlaying = currentAlbum.songs.some(song => song._id === currentSong?._id);
+		
+		if (isCurrentAlbumPlaying) {
+			// If we're playing from this album, just toggle play/pause
+			togglePlay();
+		} else {
+			// If we're not playing from this album, start playing from the beginning
+			playAlbum(currentAlbum.songs, 0);
+		}
 	};
 
 	const handlePlaySong = (index: number) => {
-		if (!currentAlbum) return;
-		playAlbum(currentAlbum?.songs, index);
+		if (!currentAlbum?.songs || currentAlbum.songs.length === 0) return;
+		
+		const selectedSong = currentAlbum.songs[index];
+		const isCurrentSong = currentSong?._id === selectedSong._id;
+		
+		if (isCurrentSong) {
+			// If clicking on the currently playing song, toggle play/pause
+			togglePlay();
+		} else {
+			// If clicking on a different song, play the album from that song
+			playAlbum(currentAlbum.songs, index);
+		}
 	};
+
+	// Check if the current album is being played
+	const isCurrentAlbumInQueue = currentAlbum?.songs && currentAlbum.songs.some(song => 
+		queue.some(queueSong => queueSong._id === song._id)
+	);
+	
+	const isCurrentAlbumPlaying = isCurrentAlbumInQueue && currentAlbum?.songs.some(song => song._id === currentSong?._id);
 
 	return (
 		<ScrollArea className="h-full rounded-md">
@@ -106,8 +131,9 @@ const AlbumPage = () => {
 							onClick={handlePlayAlbum}
 							size="icon"
 							className="w-14 h-14 rounded-full bg-green-500 hover:bg-green-400 hover:scale-105 transition-all shadow-lg"
+							disabled={!currentAlbum?.songs || currentAlbum.songs.length === 0}
 						>
-							{isPlaying && currentAlbum?.songs.some(song => song._id === currentSong?._id) ? (
+							{isPlaying && isCurrentAlbumPlaying ? (
 								<Pause className="h-7 w-7 text-black" />
 							) : (
 								<Play className="h-7 w-7 text-black" />
@@ -139,11 +165,11 @@ const AlbumPage = () => {
 									>
 										<div className="flex items-center justify-center">
 											{isCurrentSong && isPlaying ? (
-												<div className="text-green-500">♫</div>
+												<div className="text-green-500 text-sm">♫</div>
 											) : (
 												<>
-													<span className="group-hover:hidden">{index + 1}</span>
-													<Play className="h-4 w-4 hidden group-hover:block" />
+													<span className="group-hover:hidden text-zinc-400">{index + 1}</span>
+													<Play className="h-4 w-4 hidden group-hover:block text-white" />
 												</>
 											)}
 										</div>
@@ -151,13 +177,19 @@ const AlbumPage = () => {
 										<div className="flex items-center gap-3">
 											<img src={song.imageUrl} alt={song.title} className="size-10 rounded-sm object-cover" />
 											<div>
-												<div className="font-medium text-white">{song.title}</div>
-												<div className="text-xs">{song.artist}</div>
+												<div className={`font-medium ${isCurrentSong ? 'text-green-500' : 'text-white'}`}>
+													{song.title}
+												</div>
+												<div className="text-xs text-zinc-400">{song.artist}</div>
 											</div>
 										</div>
 
-										<div className="flex items-center text-sm">{song.createdAt.split("T")[0]}</div>
-										<div className="flex items-center text-sm">{formatDuration(song.duration)}</div>
+										<div className="flex items-center text-sm text-zinc-400">
+											{song.createdAt.split("T")[0]}
+										</div>
+										<div className="flex items-center text-sm text-zinc-400">
+											{formatDuration(song.duration)}
+										</div>
 									</div>
 								);
 							})}
