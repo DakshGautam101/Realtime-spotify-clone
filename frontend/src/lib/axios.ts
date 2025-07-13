@@ -1,7 +1,10 @@
 import axios from 'axios';
 
 export const axiosInstance = axios.create({
-  baseURL: 'https://realtime-spotify-clone-w2xn.onrender.com/api', // adjust this to your backend URL
+  baseURL:
+    import.meta.env.MODE === "development"
+      ? "http://localhost:5000/api"
+      : "https://realtime-spotify-clone-w2xn.onrender.com/api",
 });
 
 axiosInstance.interceptors.request.use(

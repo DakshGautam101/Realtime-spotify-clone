@@ -5,26 +5,18 @@ const AudioPlayer = () => {
 	const audioRef = useRef<HTMLAudioElement>(null);
 	const prevSongRef = useRef<string | null>(null);
 
-	const { currentSong, isPlaying, playNext } = usePlayerStore();
+	const { currentSong, isPlaying } = usePlayerStore();
 
 	// handle play/pause logic
 	useEffect(() => {
-		if (isPlaying) audioRef.current?.play();
-		else audioRef.current?.pause();
+		if (audioRef.current) {
+			if (isPlaying) {
+				audioRef.current.play().catch(console.error);
+			} else {
+				audioRef.current.pause();
+			}
+		}
 	}, [isPlaying]);
-
-	// handle song ends
-	useEffect(() => {
-		const audio = audioRef.current;
-
-		const handleEnded = () => {
-			playNext();
-		};
-
-		audio?.addEventListener("ended", handleEnded);
-
-		return () => audio?.removeEventListener("ended", handleEnded);
-	}, [playNext]);
 
 	// handle song changes
 	useEffect(() => {
@@ -41,10 +33,19 @@ const AudioPlayer = () => {
 
 			prevSongRef.current = currentSong?.audioUrl;
 
-			if (isPlaying) audio.play();
+			if (isPlaying) {
+				audio.play().catch(console.error);
+			}
 		}
 	}, [currentSong, isPlaying]);
 
-	return <audio ref={audioRef} />;
+	// Set initial volume
+	useEffect(() => {
+		if (audioRef.current) {
+			audioRef.current.volume = 0.75; // 75% volume by default
+		}
+	}, []);
+
+	return <audio ref={audioRef} preload="metadata" />;
 };
 export default AudioPlayer;

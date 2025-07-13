@@ -8,6 +8,7 @@ import {
 	Pause,
 	Play,
 	Repeat,
+	Repeat1,
 	Shuffle,
 	SkipBack,
 	SkipForward,
@@ -23,7 +24,17 @@ const formatTime = (seconds: number) => {
 };
 
 export const PlaybackControls = () => {
-	const { currentSong, isPlaying, togglePlay, playNext, playPrevious } = usePlayerStore();
+	const { 
+		currentSong, 
+		isPlaying, 
+		togglePlay, 
+		playNext, 
+		playPrevious,
+		isShuffled,
+		isRepeating,
+		toggleShuffle,
+		toggleRepeat
+	} = usePlayerStore();
 
 	const [volume, setVolume] = useState(75);
 	const [isMuted, setIsMuted] = useState(false);
@@ -49,22 +60,29 @@ export const PlaybackControls = () => {
 			};
 
 			const handleEnded = () => {
-				usePlayerStore.setState({ isPlaying: false });
+				// Let the player store handle what happens when song ends
+				playNext();
+			};
+
+			const handleLoadStart = () => {
+				setCurrentTime(0);
 			};
 
 			audio.addEventListener("timeupdate", updateTime);
 			audio.addEventListener("loadedmetadata", updateDuration);
 			audio.addEventListener("volumechange", updateVolume);
 			audio.addEventListener("ended", handleEnded);
+			audio.addEventListener("loadstart", handleLoadStart);
 
 			return () => {
 				audio.removeEventListener("timeupdate", updateTime);
 				audio.removeEventListener("loadedmetadata", updateDuration);
 				audio.removeEventListener("volumechange", updateVolume);
 				audio.removeEventListener("ended", handleEnded);
+				audio.removeEventListener("loadstart", handleLoadStart);
 			};
 		}
-	}, [currentSong]);
+	}, [currentSong, playNext]);
 
 	const handleSeek = (value: number[]) => {
 		if (audioRef.current) {
@@ -76,6 +94,19 @@ export const PlaybackControls = () => {
 		if (audioRef.current) {
 			audioRef.current.muted = !audioRef.current.muted;
 			setIsMuted(audioRef.current.muted);
+		}
+	};
+
+	const handleVolumeChange = (value: number[]) => {
+		const newVolume = value[0];
+		if (audioRef.current && newVolume !== volume) {
+			audioRef.current.volume = newVolume / 100;
+			setVolume(newVolume);
+			// Unmute if volume is changed while muted
+			if (isMuted && newVolume > 0) {
+				audioRef.current.muted = false;
+				setIsMuted(false);
+			}
 		}
 	};
 
@@ -109,7 +140,10 @@ export const PlaybackControls = () => {
 						<Button
 							size="icon"
 							variant="ghost"
-							className="hidden sm:inline-flex text-[#b3b3b3] hover:text-white cursor-pointer"
+							className={`hidden sm:inline-flex cursor-pointer transition-colors ${
+								isShuffled ? 'text-[#1db954] hover:text-[#1ed760]' : 'text-[#b3b3b3] hover:text-white'
+							}`}
+							onClick={toggleShuffle}
 						>
 							<Shuffle className="h-4 w-4" />
 						</Button>
@@ -146,14 +180,23 @@ export const PlaybackControls = () => {
 						<Button
 							size="icon"
 							variant="ghost"
-							className="hidden sm:inline-flex text-[#b3b3b3] hover:text-white cursor-pointer"
+							className={`hidden sm:inline-flex cursor-pointer transition-colors ${
+								isRepeating !== 'off' ? 'text-[#1db954] hover:text-[#1ed760]' : 'text-[#b3b3b3] hover:text-white'
+							}`}
+							onClick={toggleRepeat}
 						>
-							<Repeat className="h-4 w-4" />
+							{isRepeating === 'one' ? (
+								<Repeat1 className="h-4 w-4" />
+							) : (
+								<Repeat className="h-4 w-4" />
+							)}
 						</Button>
 					</div>
 
 					<div className="hidden sm:flex items-center gap-2 w-full">
-						<div className="text-xs text-[#b3b3b3]">{formatTime(currentTime)}</div>
+						<div className="text-xs text-[#b3b3b3] min-w-[40px] text-right">
+							{formatTime(currentTime)}
+						</div>
 						<Slider
 							value={[currentTime]}
 							max={duration || 100}
@@ -164,7 +207,9 @@ export const PlaybackControls = () => {
 								background: `linear-gradient(to right, #1db954 ${((currentTime / duration) * 100) || 0}%, #535353 ${((currentTime / duration) * 100) || 0}%)`,
 							}}
 						/>
-						<div className="text-xs text-[#b3b3b3]">{formatTime(duration)}</div>
+						<div className="text-xs text-[#b3b3b3] min-w-[40px]">
+							{formatTime(duration)}
+						</div>
 					</div>
 				</div>
 
@@ -184,10 +229,14 @@ export const PlaybackControls = () => {
 						<Button
 							size="icon"
 							variant="ghost"
-							className="text-[#b3b3b3] hover:text-white cursor-pointer "
+							className="text-[#b3b3b3] hover:text-white cursor-pointer"
 							onClick={toggleMute}
 						>
-							{isMuted ? <VolumeX className="h-4 w-4" /> : <Volume1 className="h-4 w-4" />}
+							{isMuted || volume === 0 ? (
+								<VolumeX className="h-4 w-4" />
+							) : (
+								<Volume1 className="h-4 w-4" />
+							)}
 						</Button>
 
 						<Slider
@@ -195,18 +244,11 @@ export const PlaybackControls = () => {
 							max={100}
 							step={1}
 							className="w-24 hover:cursor-grab rounded-b-md active:cursor-grabbing"
-							onValueChange={(value) => {
-								const newVolume = value[0];
-								if (audioRef.current && newVolume !== volume) {
-									audioRef.current.volume = newVolume / 100;
-								}
-								setVolume(newVolume);
-							}}
+							onValueChange={handleVolumeChange}
 							style={{
 								background: `linear-gradient(to right, #1db954 ${volume}%, #535353 ${volume}%)`,
 							}}
 						/>
-
 					</div>
 				</div>
 			</div>

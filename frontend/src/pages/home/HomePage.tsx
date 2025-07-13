@@ -26,6 +26,7 @@ const HomePage = () => {
 	}, [fetchFeaturedSongs, fetchMadeForYouSongs, fetchTrendingSongs]);
 
 	useEffect(() => {
+		// Only initialize queue if we have songs and no current queue
 		if (madeForYouSongs.length > 0 && featuredSongs.length > 0 && trendingSongs.length > 0) {
 			const allSongs = [...featuredSongs, ...madeForYouSongs, ...trendingSongs];
 			initializeQueue(allSongs);
