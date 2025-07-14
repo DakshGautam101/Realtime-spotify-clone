@@ -106,18 +106,18 @@ const AlbumPage = () => {
 
 				<div className="relative z-10">
 					{/* Header */}
-					<div className="flex p-6 gap-6 pb-8">
+					<div className="flex flex-col sm:flex-row p-4 sm:p-6 gap-4 sm:gap-6 pb-6 sm:pb-8">
 						<img
 							src={currentAlbum?.imageUrl}
 							alt={currentAlbum?.title}
-							className="w-[240px] h-[240px] rounded shadow-2xl object-cover"
+							className="w-full max-w-[200px] sm:w-[180px] sm:h-[180px] lg:w-[240px] lg:h-[240px] mx-auto sm:mx-0 aspect-square rounded shadow-2xl object-cover"
 						/>
-						<div className="flex flex-col justify-end">
-							<p className="text-sm font-medium">Album</p>
-							<h1 className="text-5xl md:text-7xl font-bold text-white my-4">
+						<div className="flex flex-col justify-end text-center sm:text-left">
+							<p className="text-xs sm:text-sm font-medium">Album</p>
+							<h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-7xl font-bold text-white my-2 sm:my-4">
 								{currentAlbum?.title}
 							</h1>
-							<div className="flex items-center gap-2 text-sm text-zinc-100">
+							<div className="flex items-center justify-center sm:justify-start gap-2 text-xs sm:text-sm text-zinc-100">
 								<span className="font-medium text-white">{currentAlbum?.artist}</span>
 								<span>• {currentAlbum?.songs.length} songs</span>
 								<span>• {currentAlbum?.releaseYear}</span>
@@ -126,68 +126,68 @@ const AlbumPage = () => {
 					</div>
 
 					{/* Play Button */}
-					<div className="px-6 pb-6">
+					<div className="px-4 sm:px-6 pb-4 sm:pb-6 flex justify-center sm:justify-start">
 						<Button
 							onClick={handlePlayAlbum}
 							size="icon"
-							className="w-14 h-14 rounded-full bg-green-500 hover:bg-green-400 hover:scale-105 transition-all shadow-lg"
+							className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-green-500 hover:bg-green-400 hover:scale-105 transition-all shadow-lg"
 							disabled={!currentAlbum?.songs || currentAlbum.songs.length === 0}
 						>
 							{isPlaying && isCurrentAlbumPlaying ? (
-								<Pause className="h-7 w-7 text-black" />
+								<Pause className="h-5 w-5 sm:h-7 sm:w-7 text-black" />
 							) : (
-								<Play className="h-7 w-7 text-black" />
+								<Play className="h-5 w-5 sm:h-7 sm:w-7 text-black" />
 							)}
 						</Button>
 					</div>
 
 					{/* Song Table */}
 					<div className="bg-black/30 backdrop-blur-md border-t border-white/10">
-						<div className="grid grid-cols-[16px_4fr_2fr_1fr] gap-4 px-10 py-2 text-sm text-zinc-400 border-b border-white/5">
+						<div className="hidden sm:grid grid-cols-[16px_4fr_2fr_1fr] gap-2 sm:gap-4 px-4 sm:px-6 lg:px-10 py-2 text-xs sm:text-sm text-zinc-400 border-b border-white/5">
 							<div>#</div>
 							<div>Title</div>
 							<div>Released</div>
 							<div>
-								<Clock className="h-4 w-4" />
+								<Clock className="h-3 w-3 sm:h-4 sm:w-4" />
 							</div>
 						</div>
 
-						<div className="px-6 py-4 space-y-1">
+						<div className="px-2 sm:px-4 lg:px-6 py-2 sm:py-4 space-y-1">
 							{currentAlbum?.songs.map((song, index) => {
 								const isCurrentSong = currentSong?._id === song._id;
 								return (
 									<div
 										key={song._id}
 										onClick={() => handlePlaySong(index)}
-										className={`group grid grid-cols-[16px_4fr_2fr_1fr] gap-4 px-4 py-2 rounded-md cursor-pointer transition-colors 
+										className={`group grid grid-cols-[auto_1fr_auto] sm:grid-cols-[16px_4fr_2fr_1fr] gap-2 sm:gap-4 px-2 sm:px-4 py-2 rounded-md cursor-pointer transition-colors 
 											${isCurrentSong ? 'bg-green-500/10' : 'hover:bg-white/5'}
 										`}
 									>
-										<div className="flex items-center justify-center">
+										<div className="flex items-center justify-center w-4 sm:w-auto">
 											{isCurrentSong && isPlaying ? (
-												<div className="text-green-500 text-sm">♫</div>
+												<div className="text-green-500 text-xs sm:text-sm">♫</div>
 											) : (
 												<>
-													<span className="group-hover:hidden text-zinc-400">{index + 1}</span>
-													<Play className="h-4 w-4 hidden group-hover:block text-white" />
+													<span className="group-hover:hidden text-zinc-400 text-xs sm:text-sm">{index + 1}</span>
+													<Play className="h-3 w-3 sm:h-4 sm:w-4 hidden group-hover:block text-white" />
 												</>
 											)}
 										</div>
 
-										<div className="flex items-center gap-3">
-											<img src={song.imageUrl} alt={song.title} className="size-10 rounded-sm object-cover" />
+										<div className="flex items-center gap-2 sm:gap-3 min-w-0">
+											<img src={song.imageUrl} alt={song.title} className="size-8 sm:size-10 rounded-sm object-cover flex-shrink-0" />
 											<div>
-												<div className={`font-medium ${isCurrentSong ? 'text-green-500' : 'text-white'}`}>
+												<div className={`font-medium truncate text-sm sm:text-base ${isCurrentSong ? 'text-green-500' : 'text-white'}`}>
 													{song.title}
 												</div>
-												<div className="text-xs text-zinc-400">{song.artist}</div>
+												<div className="text-xs text-zinc-400 truncate">{song.artist}</div>
 											</div>
 										</div>
 
-										<div className="flex items-center text-sm text-zinc-400">
+										<div className="hidden sm:flex items-center text-xs sm:text-sm text-zinc-400">
 											{song.createdAt.split("T")[0]}
 										</div>
-										<div className="flex items-center text-sm text-zinc-400">
+										<div className="flex items-center text-xs sm:text-sm text-zinc-400">
 											{formatDuration(song.duration)}
 										</div>
 									</div>

@@ -11,9 +11,9 @@ const AuthPage = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-zinc-900 to-black">
-      <Card className="w-[90%] max-w-md bg-zinc-900 border-zinc-800 shadow-2xl">
-        <CardContent className="py-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-zinc-900 to-black p-4">
+      <Card className="w-full max-w-sm sm:max-w-md bg-zinc-900 border-zinc-800 shadow-2xl">
+        <CardContent className="py-6 sm:py-8 px-4 sm:px-6">
           <SignInForm />
         </CardContent>
       </Card>

@@ -5,13 +5,24 @@ import { cn } from "@/lib/utils";
 import { useMusicStore } from "@/stores/useMusicStore.ts";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { HomeIcon, Library, MessageCircle } from "lucide-react";
-import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
 
 const LeftSidebar = () => {
 	const { albums, fetchAlbums, isLoading } = useMusicStore();
 	const { isAuthenticated } = useAuthStore();
+	const [isCollapsed, setIsCollapsed] = useState(false);
+
+	useEffect(() => {
+		const checkCollapse = () => {
+			setIsCollapsed(window.innerWidth < 768);
+		};
+		
+		checkCollapse();
+		window.addEventListener("resize", checkCollapse);
+		return () => window.removeEventListener("resize", checkCollapse);
+	}, []);
 
 	useEffect(() => {
 		fetchAlbums();
@@ -22,23 +33,23 @@ const LeftSidebar = () => {
 			initial={{ x: -50, opacity: 0 }}
 			animate={{ x: 0, opacity: 1 }}
 			transition={{ duration: 0.4, ease: "easeOut" }}
-			className='h-full flex flex-col gap-2'
+			className={`h-full flex flex-col gap-2 ${isCollapsed ? 'items-center' : ''}`}
 		>
 			{/* Navigation */}
-			<div className='rounded-lg bg-zinc-900 p-4'>
+			<div className={`rounded-lg bg-zinc-900 ${isCollapsed ? 'p-2' : 'p-4'}`}>
 				<div className='space-y-2'>
 					<Link
 						to={"/"}
 						className={cn(
 							buttonVariants({
 								variant: "ghost",
-								className:
-									"w-full justify-start text-white hover:bg-zinc-800 transition-all duration-200",
+								className: `w-full ${isCollapsed ? 'justify-center px-2' : 'justify-start'} text-white hover:bg-zinc-800 transition-all duration-200`,
 							})
 						)}
+						title={isCollapsed ? "Home" : ""}
 					>
 						<HomeIcon className='mr-2 size-5' />
-						<span className='hidden md:inline'>Home</span>
+						<span className={isCollapsed ? 'hidden' : 'inline'}>Home</span>
 					</Link>
 
 					{isAuthenticated && (
@@ -47,26 +58,26 @@ const LeftSidebar = () => {
 							className={cn(
 								buttonVariants({
 									variant: "ghost",
-									className:
-										"w-full justify-start text-white hover:bg-zinc-800 transition-all duration-200",
+									className: `w-full ${isCollapsed ? 'justify-center px-2' : 'justify-start'} text-white hover:bg-zinc-800 transition-all duration-200`,
 								})
 							)}
+							title={isCollapsed ? "Messages" : ""}
 						>
 							<MessageCircle className='mr-2 size-5' />
-							<span className='hidden md:inline'>Messages</span>
+							<span className={isCollapsed ? 'hidden' : 'inline'}>Messages</span>
 						</Link>
 					)}
 				</div>
 			</div>
 
 			{/* Playlist Library */}
-			<div className='flex-1 rounded-lg bg-zinc-900 p-4'>
-				<div className='flex items-center mb-4 text-white px-2'>
+			<div className={`flex-1 rounded-lg bg-zinc-900 ${isCollapsed ? 'p-2' : 'p-4'}`}>
+				<div className={`flex items-center mb-4 text-white ${isCollapsed ? 'justify-center' : 'px-2'}`}>
 					<Library className='size-5 mr-2' />
-					<span className='hidden md:inline font-bold'>Playlists</span>
+					<span className={`${isCollapsed ? 'hidden' : 'inline'} font-bold`}>Playlists</span>
 				</div>
 
-				<ScrollArea className='h-[calc(100vh-300px)]'>
+				<ScrollArea className={`${isCollapsed ? 'h-[calc(100vh-200px)]' : 'h-[calc(100vh-300px)]'}`}>
 					<div className='space-y-2'>
 						{isLoading ? (
 							<PlaylistSkeleton />
@@ -80,14 +91,15 @@ const LeftSidebar = () => {
 								>
 									<Link
 										to={`/albums/${album._id}`}
-										className='p-2 hover:bg-zinc-800 transition-colors duration-200 rounded-md flex items-center gap-3 group cursor-pointer'
+										className={`p-2 hover:bg-zinc-800 transition-colors duration-200 rounded-md flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'} group cursor-pointer`}
+										title={isCollapsed ? `${album.title} - ${album.artist}` : ""}
 									>
 										<img
 											src={album.imageUrl}
 											alt='Playlist'
-											className='size-12 rounded-md flex-shrink-0 object-cover'
+											className={`${isCollapsed ? 'size-8' : 'size-12'} rounded-md flex-shrink-0 object-cover`}
 										/>
-										<div className='flex-1 min-w-0 hidden md:block'>
+										<div className={`flex-1 min-w-0 ${isCollapsed ? 'hidden' : 'block'}`}>
 											<p className='font-medium truncate'>{album.title}</p>
 											<p className='text-sm text-zinc-400 truncate'>
 												Album • {album.artist}
