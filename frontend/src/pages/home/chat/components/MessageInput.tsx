@@ -4,8 +4,10 @@ import { useChatStore } from "@/stores/useChatStore";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { Send, Loader2 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 const MessageInput = () => {
+	const isMobile = useIsMobile();
 	const [newMessage, setNewMessage] = useState("");
 	const [isSending, setIsSending] = useState(false);
 	const [error, setError] = useState("");
@@ -60,18 +62,23 @@ const MessageInput = () => {
 	}, []);
 
 	return (
-		<div className='p-4 mt-auto border-t border-zinc-800'>
+		<div className='p-2 xs:p-3 sm:p-4 mt-auto border-t border-zinc-800'>
 			<div className='flex gap-2'>
 				<Input
 					placeholder='Type a message'
 					value={newMessage}
 					onChange={handleTyping}
-					className='bg-zinc-800 border-none'
+					className='bg-zinc-800 border-none text-sm xs:text-base'
 					onKeyDown={(e) => e.key === "Enter" && handleSend()}
 					disabled={isSending}
 				/>
 
-				<Button size={"icon"} onClick={handleSend} disabled={!newMessage.trim() || isSending}>
+				<Button 
+					size={isMobile ? "sm" : "default"} 
+					className='shrink-0' 
+					onClick={handleSend} 
+					disabled={!newMessage.trim() || isSending}
+				>
 					{isSending ? <Loader2 className='size-4 animate-spin' /> : <Send className='size-4' />}
 				</Button>
 			</div>

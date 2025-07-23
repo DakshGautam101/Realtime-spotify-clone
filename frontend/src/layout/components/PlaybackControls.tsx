@@ -228,7 +228,7 @@ export const PlaybackControls = () => {
 				</div>
 
 				{/* volume controls */}
-				<div className="hidden lg:flex items-center gap-2 lg:gap-4 min-w-[120px] lg:min-w-[180px] w-[25%] lg:w-[30%] justify-end">
+				<div className="hidden sm:flex items-center gap-2 lg:gap-4 min-w-[120px] lg:min-w-[180px] w-[25%] lg:w-[30%] justify-end">
 					<Button size="icon" variant="ghost" className="text-[#b3b3b3] hover:text-white cursor-pointer h-6 w-6 lg:h-8 lg:w-8">
 						<Mic2 className="h-3 w-3 lg:h-4 lg:w-4" />
 					</Button>

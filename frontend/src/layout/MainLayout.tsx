@@ -5,6 +5,7 @@ import FriendsActivity from "./components/FriendsActivity";
 import AudioPlayer from "./components/AudioPlayer";
 import { PlaybackControls } from "./components/PlaybackControls";
 import { useEffect, useState } from "react";
+import RotationWarning from "@/components/RotationWarning";
 
 const MainLayout = () => {
 	const [screenSize, setScreenSize] = useState({
@@ -32,6 +33,7 @@ const MainLayout = () => {
 
 	return (
 		<div className='h-screen bg-black text-white flex flex-col overflow-hidden'>
+			<RotationWarning />
 			<ResizablePanelGroup 
 				direction='horizontal' 
 				className={`flex-1 flex h-full overflow-hidden ${isMobile ? 'p-1' : 'p-2'}`}

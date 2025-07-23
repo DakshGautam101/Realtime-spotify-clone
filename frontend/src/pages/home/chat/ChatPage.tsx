@@ -9,6 +9,7 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import MessageInput from "./components/MessageInput";
 import MessageSkeleton from "./components/MessageSkeleton";
 import { Check, CheckCheck } from "lucide-react";
+import RotationWarning from "@/components/RotationWarning"
 
 const formatTime = (date: string) => {
 	return new Date(date).toLocaleTimeString("en-US", {
@@ -43,18 +44,18 @@ const ChatPage = () => {
 	return (
 		<main className='h-full rounded-lg bg-gradient-to-b from-zinc-800 to-zinc-900 overflow-hidden'>
 			<Topbar />
+			<RotationWarning />
 
-			<div className='grid grid-cols-[60px_1fr] sm:grid-cols-[80px_1fr] lg:grid-cols-[300px_1fr] h-[calc(100vh-140px)] sm:h-[calc(100vh-180px)]'>
+			<div className='grid grid-cols-[60px_1fr] xs:grid-cols-[80px_1fr] lg:grid-cols-[280px_1fr] h-[calc(100vh-140px)] sm:h-[calc(100vh-180px)]'>
 				<UsersList />
 
-				{/* chat message */}
 				<div className='flex flex-col h-full'>
 					{selectedUser ? (
 						<>
 							<ChatHeader />
 
 							{/* Messages */}
-							<ScrollArea className='h-[calc(100vh-280px)] sm:h-[calc(100vh-340px)]'>
+							<ScrollArea className='flex-1 h-[calc(100vh-280px)] xs:h-[calc(100vh-320px)] sm:h-[calc(100vh-340px)]'>
 								<div className='p-2 sm:p-4 space-y-2 sm:space-y-4'>
 									{isLoading ? (
 										<MessageSkeleton />

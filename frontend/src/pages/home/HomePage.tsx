@@ -37,7 +37,7 @@ const HomePage = () => {
 		<main className='rounded-md overflow-hidden h-full bg-gradient-to-b from-zinc-800 to-zinc-900'>
 			<Topbar />
 			<ScrollArea className='h-[calc(100vh-140px)] sm:h-[calc(100vh-180px)]'>
-				<div className='p-3 sm:p-4 lg:p-6'>
+				<div className='p-3 sm:p-4 lg:p-6 space-y-4 sm:space-y-6'>
 					<h1 className='text-xl sm:text-2xl lg:text-3xl font-bold mb-4 sm:mb-6'>Good afternoon</h1>
 					<FeaturedSection />
 
