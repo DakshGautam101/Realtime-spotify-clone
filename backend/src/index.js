@@ -25,19 +25,19 @@ const PORT = process.env.PORT;
 
 const httpServer = createServer(app);
 initializeSocket(httpServer);
-const allowedOrigins = ["http://localhost:5173", "http://localhost:3000", "https://realtime-spotify-clone-frontend.onrender.com" , "https://realtime-spotify-clone-taupe.vercel.app/"];
+const allowedOrigins = ["http://localhost:5173", "http://localhost:3000", "https://realtime-spotify-clone-frontend.onrender.com", "https://realtime-spotify-clone-taupe.vercel.app/"];
 
 app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-  })
+	cors({
+		origin: function (origin, callback) {
+			if (!origin || allowedOrigins.includes(origin)) {
+				callback(null, true);
+			} else {
+				callback(new Error("Not allowed by CORS"));
+			}
+		},
+		credentials: true,
+	})
 );
 
 
@@ -63,11 +63,11 @@ cron.schedule("0 * * * *", () => {
 				return;
 			}
 			for (const file of files) {
-				fs.unlink(path.join(tempDir, file), (err) => {});
+				fs.unlink(path.join(tempDir, file), (err) => { });
 			}
 		});
 	}
-}); 
+});
 
 app.use("/api/users", userRoutes);
 app.use("/api/admin", adminRoutes);
