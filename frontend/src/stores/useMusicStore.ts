@@ -5,6 +5,9 @@ import type { Stats } from "@/types";
 import toast from "react-hot-toast";
 import { create } from "zustand";
 
+const getErrorMessage = (error: any, fallback: string) =>
+	error?.response?.data?.message || error?.message || fallback;
+
 interface MusicStore {
 	songs: Song[];
 	albums: Album[];
@@ -84,7 +87,7 @@ export const useMusicStore = create<MusicStore>((set) => ({
 			const response = await axiosInstance.get("/songs");
 			set({ songs: response.data });
 		} catch (error: any) {
-			set({ error: error.message });
+			set({ error: getErrorMessage(error, "Failed to fetch songs") });
 		} finally {
 			set({ isLoading: false });
 		}
@@ -96,7 +99,7 @@ export const useMusicStore = create<MusicStore>((set) => ({
 			const response = await axiosInstance.get("/stats");
 			set({ stats: response.data });
 		} catch (error: any) {
-			set({ error: error.message });
+			set({ error: getErrorMessage(error, "Failed to fetch stats") });
 		} finally {
 			set({ isLoading: false });
 		}
@@ -109,7 +112,7 @@ export const useMusicStore = create<MusicStore>((set) => ({
 			const response = await axiosInstance.get("/albums");
 			set({ albums: response.data });
 		} catch (error: any) {
-			set({ error: error.response.data.message });
+			set({ error: getErrorMessage(error, "Failed to fetch albums") });
 		} finally {
 			set({ isLoading: false });
 		}
@@ -121,7 +124,7 @@ export const useMusicStore = create<MusicStore>((set) => ({
 			const response = await axiosInstance.get(`/albums/${id}`);
 			set({ currentAlbum: response.data });
 		} catch (error: any) {
-			set({ error: error.response.data.message });
+			set({ error: getErrorMessage(error, "Failed to fetch album") });
 		} finally {
 			set({ isLoading: false });
 		}
@@ -133,7 +136,7 @@ export const useMusicStore = create<MusicStore>((set) => ({
 			const response = await axiosInstance.get("/songs/featured");
 			set({ featuredSongs: response.data });
 		} catch (error: any) {
-			set({ error: error.response.data.message });
+			set({ error: getErrorMessage(error, "Failed to fetch featured songs") });
 		} finally {
 			set({ isLoading: false });
 		}
@@ -145,7 +148,7 @@ export const useMusicStore = create<MusicStore>((set) => ({
 			const response = await axiosInstance.get("/songs/made-for-you");
 			set({ madeForYouSongs: response.data });
 		} catch (error: any) {
-			set({ error: error.response.data.message });
+			set({ error: getErrorMessage(error, "Failed to fetch made-for-you songs") });
 		} finally {
 			set({ isLoading: false });
 		}
@@ -157,7 +160,7 @@ export const useMusicStore = create<MusicStore>((set) => ({
 			const response = await axiosInstance.get("/songs/trending");
 			set({ trendingSongs: response.data });
 		} catch (error: any) {
-			set({ error: error.response.data.message });
+			set({ error: getErrorMessage(error, "Failed to fetch trending songs") });
 		} finally {
 			set({ isLoading: false });
 		}
