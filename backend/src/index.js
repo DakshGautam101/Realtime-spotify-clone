@@ -25,7 +25,7 @@ const PORT = process.env.PORT;
 
 const httpServer = createServer(app);
 initializeSocket(httpServer);
-const allowedOrigins = ["http://localhost:5173", "http://localhost:3000", "https://realtime-spotify-clone-frontend.onrender.com"];
+const allowedOrigins = ["http://localhost:5173", "http://localhost:3000", "https://realtime-spotify-clone-frontend.onrender.com" , "https://realtime-spotify-clone-taupe.vercel.app/"];
 
 app.use(
   cors({
